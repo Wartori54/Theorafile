@@ -537,9 +537,18 @@ void tf_reset(OggTheora_File *file)
 	ogg_sync_reset(&file->sync);
 	file->io.seek_func(file->datasource, 0, SEEK_SET);
 	file->eos = 0;
+	ogg_int64_t zero = 0;
+	for (int i = 0; i < file->ttracks; i += 1) {
+	    th_decode_ctl(file->tdec[i], TH_DECCTL_SET_GRANPOS, &zero, sizeof(zero));
+	}
+	tf_open_callbacks(file->datasource, file, file->io);
 }
 
-int tf_readvideo(OggTheora_File *file, char *buffer, int numframes)
+int tf_readvideo(OggTheora_File *file, char *buffer, int numframes) {
+	return tf_readvideo2(file, buffer, numframes, NULL);
+}
+
+int tf_readvideo2(OggTheora_File *file, char *buffer, int numframes, ogg_int64_t* granpos)
 {
 	int i;
 	char *dst = buffer;
@@ -565,6 +574,16 @@ int tf_readvideo(OggTheora_File *file, char *buffer, int numframes)
 			return 0;
 		}
 
+		/* Apparently you need to constantly feed new data to theora in order to get meaningful granule positions.
+		 * A quick look at the source code confirm this, currframe_num from thx_dec_ctx is only incremented by one
+		 * each time a packet is read, ignoring completely the granulepos that the packet we feed has.
+		 * Some claim this to be a hack.
+		 */
+		if (packet.granulepos > 0) {
+			th_decode_ctl(file->tdec[file->ttrack], TH_DECCTL_SET_GRANPOS,
+				&packet.granulepos, sizeof(packet.granulepos));
+		}
+
 		rc = th_decode_packetin(
 			file->tdec[file->ttrack],
 			&packet,
@@ -580,6 +599,9 @@ int tf_readvideo(OggTheora_File *file, char *buffer, int numframes)
 			return 0; /* Why did we get here...? */
 		}
 	}
+
+	if (granpos)
+	    *granpos = granulepos;
 
 	if (retval) /* New frame! */
 	{
@@ -638,7 +660,11 @@ int tf_readvideo(OggTheora_File *file, char *buffer, int numframes)
 	return retval;
 }
 
-int tf_readaudio(OggTheora_File *file, float *buffer, int samples)
+int tf_readaudio(OggTheora_File *file, float *buffer, int samples) {
+	return tf_readaudio2(file, buffer, samples, NULL);
+}
+
+int tf_readaudio2(OggTheora_File *file, float *buffer, int samples, ogg_int64_t* granpos)
 {
 	int offset = 0;
 	int chan, frame;
@@ -661,6 +687,8 @@ int tf_readaudio(OggTheora_File *file, float *buffer, int samples)
 						&file->vdsp,
 						frame
 					);
+					if (granpos)
+					    *granpos = file->vdsp.granulepos;
 					return offset;
 				}
 			}
