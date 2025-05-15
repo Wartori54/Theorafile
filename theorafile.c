@@ -660,6 +660,15 @@ int tf_readvideo2(OggTheora_File *file, char *buffer, int numframes, ogg_int64_t
 	return retval;
 }
 
+void tf_granpos_dec(OggTheora_File *file, ogg_int64_t granpos, double *sec, int64_t *frame) {
+	if (sec) {
+		*sec = th_granule_time(file->tdec[file->ttrack], granpos);
+	}
+	if (frame) {
+		*frame = th_granule_frame(file->tdec[file->ttrack], granpos);
+	}
+}
+
 int tf_readaudio(OggTheora_File *file, float *buffer, int samples) {
 	return tf_readaudio2(file, buffer, samples, NULL);
 }
