@@ -660,7 +660,7 @@ int tf_readvideo2(OggTheora_File *file, char *buffer, int numframes, ogg_int64_t
 	return retval;
 }
 
-void tf_granpos_dec(OggTheora_File *file, ogg_int64_t granpos, double *sec, int64_t *frame) {
+void tf_granpos_dec(OggTheora_File *file, ogg_int64_t granpos, double *sec, ogg_int64_t *frame) {
 	if (sec) {
 		*sec = th_granule_time(file->tdec[file->ttrack], granpos);
 	}

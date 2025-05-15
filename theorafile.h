@@ -138,7 +138,7 @@ DECLSPEC int tf_readvideo(OggTheora_File *file, char *buffer, int numframes);
 DECLSPEC int tf_readvideo2(OggTheora_File *file, char *buffer, int numframes, ogg_int64_t *grantime);
 DECLSPEC int tf_readaudio(OggTheora_File *file, float *buffer, int samples);
 DECLSPEC int tf_readaudio2(OggTheora_File *file, float *buffer, int samples, ogg_int64_t *gpos);
-DECLSPEC void tf_granpos_dec(OggTheora_File *file, ogg_int64_t granpos, double *sec, int64_t *frame);
+DECLSPEC void tf_granpos_dec(OggTheora_File *file, ogg_int64_t granpos, double *sec, ogg_int64_t *frame);
 /* Support for multiple audio tracks in a single file
  *
  * Note that this function is NOT thread-safe! You should put a mutex around it
