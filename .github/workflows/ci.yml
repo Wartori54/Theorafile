@@ -166,3 +166,34 @@ jobs:
       with:
         name: Theorafile-libpowerpc
         path: libtheorafile.so
+
+  make-common-artifact:
+    needs:
+      - linux
+      - macos
+      - linux-mingw
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: false
+      - name: Setup structure
+        run: |
+          mkdir -p out/lib-linux
+          mv artifacts/Theorafile-lib64/libtheorafile.so out/lib-linux/libtheorafilebun.so
+          
+          mkdir -p out/lib-osx
+          mv artifacts/Theorafile-osx/libtheorafile.dylib out/lib-osx/libtheorafilebun.dylib
+          
+          mkdir -p out/lib-win-x64
+          mv artifacts/Theorafile-x64/libtheorafile.dll out/lib-win-x64/libtheorafilebun.dll
+          
+          mkdir -p out/lib-win-x86
+          mv artifacts/Theorafile-x86/libtheorafile.dll out/lib-win-x86/libtheorafilebun.dll
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bundle
+          path: out
