@@ -188,10 +188,10 @@ jobs:
           mv artifacts/Theorafile-osx/libtheorafile.dylib out/lib-osx/libtheorafilebun.dylib
           
           mkdir -p out/lib-win-x64
-          mv artifacts/Theorafile-x64/libtheorafile.dll out/lib-win-x64/libtheorafilebun.dll
+          mv artifacts/Theorafile-x64/libtheorafile.dll out/lib-win-x64/theorafilebun.dll
           
           mkdir -p out/lib-win-x86
-          mv artifacts/Theorafile-x86/libtheorafile.dll out/lib-win-x86/libtheorafilebun.dll
+          mv artifacts/Theorafile-x86/libtheorafile.dll out/lib-win-x86/theorafilebun.dll
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
