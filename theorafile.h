@@ -163,6 +163,8 @@ DECLSPEC int tf_setaudiotrack(OggTheora_File *file, int vtrack);
  */
 DECLSPEC int tf_setvideotrack(OggTheora_File *file, int ttrack);
 
+DECLSPEC size_t tf_gettheorasize();
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -724,3 +724,8 @@ int tf_readaudio2(OggTheora_File *file, float *buffer, int samples, ogg_int64_t*
 	}
 	return offset;
 }
+
+size_t tf_gettheorasize() {
+    return sizeof(OggTheora_File);
+}
+
